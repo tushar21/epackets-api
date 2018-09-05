@@ -1,0 +1,25 @@
+{
+  "name": "epackets-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tushar21/epackets-api.git"
+  },
+  "author": "tushar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tushar21/epackets-api/issues"
+  },
+  "homepage": "https://github.com/tushar21/epackets-api#readme",
+  "dependencies": {
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.2.13"
+  }
+}
