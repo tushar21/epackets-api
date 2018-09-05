@@ -12,9 +12,16 @@ module.exports.add = function(req, res){
 }
 
 module.exports.login = function(req, res){
+    console.log(req.body, "req.body");
+    
     User.get(req.body)
     .then(function(userSaveResponse){
-        res.send(userSaveResponse);
+        console.log(userSaveResponse, "userSaveResponse");
+        if(userSaveResponse) {
+            res.send(userSaveResponse); 
+        } else{
+            res.status(500).send({ error: "Invalid user credentials"})
+        }        
     })
     .catch(function(err){
         console.error("Error in login", err);
