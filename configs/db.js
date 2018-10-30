@@ -21,6 +21,6 @@ module.exports.connect = function(){
             }
         }
     );
-
-
 }
+
+module.exports.client = client;
