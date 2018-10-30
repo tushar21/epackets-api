@@ -13,7 +13,6 @@ module.exports.add = function(req, res){
 
 module.exports.login = function(req, res){
     console.log(req.body, "req.body");
-    
     User.get(req.body)
     .then(function(userSaveResponse){
         console.log(userSaveResponse, "userSaveResponse");

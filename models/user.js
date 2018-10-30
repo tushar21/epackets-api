@@ -1,17 +1,7 @@
-const Mongoose = require('mongoose');
-const Schema = Mongoose.Schema;
+var elastic = require("elasticsearch");
+const db = require('../configs/db');
 
-const userSchema = new Schema({
-    first_name : String,
-    last_name : String,
-    password: String,
-    email : String,
-    premium : Boolean,
-    contact: Number,
-    type : Number
-});
-
-const User = Mongoose.model("User", userSchema);
+const userIndice = "users";
 
 module.exports = {
     get : get,
@@ -19,30 +9,38 @@ module.exports = {
     list : list
 };
 
-function get(qry){
+function add(user){
     return new Promise(function(resolve, reject){
-        User.findOne(qry, function(err, data){
+        db.create({
+            index: userIndice,
+            type: 'mytype',            
+            body: user
+        }, function(err, data){
             if(err) reject(err);
             resolve(data);
         })
     })    
 }
 
-function add(qry){
-    return new Promise(function(resolve, reject){
-        var newUser = new User(qry);
-        newUser.save(function(err, response){
-            if(err) reject(err);
-            resolve(response);
-        })
-    })    
+function get(qry){
+    /* const response = await client.search({
+        index: userIndice,
+        q: ':test'
+    }); */
 }
 
-function list(qry){
-    return new Promise(function(resolve, reject){
-        User.find(qry, function(err, listResponse){
-            if(err) reject(err);
-            resolve(listResponse);
-        })
-    })    
+
+function list(){
+    
 }
+
+
+
+
+
+
+
+
+
+
+
