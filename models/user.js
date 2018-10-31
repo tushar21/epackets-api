@@ -4,11 +4,12 @@ const UUID = require('../helper/uuid');
 const MD5 = require('md5');
 const JWT= require('../helper/jwt');
 const userIndice = "users";
-
+const IndexType =   'mytype';
 module.exports = {
     get : get,
     add : add,
-    list : list
+    list : list,
+    details:details
 };
 
 function add(user){
@@ -16,10 +17,11 @@ function add(user){
     if(user.password){
         user.password = MD5(user.password);
     }
+    user.type = "customer";
     return new Promise(function(resolve, reject){
         db.client.create({
             'index': userIndice,
-            "type": 'mytype',
+            "type": IndexType,
             "id": uuid,
             "body": user
         }, function(err, data){
@@ -41,12 +43,12 @@ function get(qry){
                     "bool": {
                       "must": [
                         {
-                          "match": {
-                            "email": qry.email
+                          "term": {
+                            "email.keyword": qry.email
                           }
                         },
                         {
-                          "match": {
+                          "term": {
                             "password": qry.password
                           }
                         }
@@ -61,7 +63,7 @@ function get(qry){
             if(data.hits && data.hits.total == 0){
                 result.status = "error";
                 result.message = "No user found!! Please try with different credentials";
-                resolve(result);
+                reject(result.message);
             }
             else if(data.hits && data.hits.total == 1){
                 let user = data.hits.hits[0];
@@ -76,23 +78,64 @@ function get(qry){
                 result.data = returnUser;
                 result.message = "User logged in successfully";
                 resolve(result);
-            }            
+            } 
+            
+            resolve(result);
         });
     });
 }
 
 
-function list(){
-    
+function list(page = 1){
+    return new Promise(function(resolve, reject){
+        db.client.search({
+            "index": userIndice,
+            "body": {
+                "query": {
+                    "match_all": {}
+                  }
+            }
+        }, function(err, data){
+            if(err) reject(err);
+            if(data.hits && data.hits.total > 0){
+                data = data.hits.hits.map(function(userData){
+                    return {
+                        id : userData._id,
+                        first_name : (userData._source.first_name)? userData._source.first_name : '',
+                        last_name : (userData._source.last_name) ? userData._source.last_name : '',
+                        email: (userData._source.email) ? userData._source.email : '',
+                        status: (userData._source.status) ? userData._source.status : ''
+                    }
+                })
+            }
+            resolve(data);
+        });
+    });
 }
 
-
-
-
-
-
-
-
-
-
-
+function details(userId){
+    return new Promise(function(resolve, reject){
+        db.client.get({
+            "index": userIndice,
+            "type": IndexType,
+            "id": userId
+        }, function(err, userData){
+            console.log(err, "err in fetching details ");
+            if(err) reject(err);
+            let user =  null;
+            if(userData._id && userData._source){
+                let user = {
+                    id : userData._id,
+                    first_name : (userData._source && userData._source.first_name)? userData._source.first_name : '',
+                    last_name : (userData._source.last_name) ? userData._source.last_name : '',
+                    email: (userData._source.email) ? userData._source.email : '',
+                    status: (userData._source.status) ? userData._source.status : ''
+                }
+                resolve(user);
+            }
+            else{
+                reject("User not found with following ID");
+            }
+        });
+    });
+}
