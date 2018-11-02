@@ -5,3 +5,9 @@ Installation will need to run docker first.
 After docker is running, run application: 
 1) npm install (this will be onle time only)
 2) npm start
+
+
+After api is running, create indices by running this url in browser: 
+http://localhost:3002/cron/createIndices
+
+Note : you can use your ip address instead of localhost Ex: http://<YOUR IP HERE>/cron/createIndices

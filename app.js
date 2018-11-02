@@ -24,9 +24,9 @@ APP.use(async function(req, res, next){
     let headerToken = req.headers.authorization.split(" ")[1];
     if(headerToken) {
         try {
-        let decodedToken = await JWT.decode(headerToken);
-        if(decodedToken) req.user = decodedToken;
-        next();
+            let decodedToken = await JWT.decode(headerToken);
+            if(decodedToken) req.user = decodedToken;
+            next();
         } catch (error) {
         console.log(error, "error in auth token");
         res.status(401).send({
