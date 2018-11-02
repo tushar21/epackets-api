@@ -1,4 +1,5 @@
 const DB = require('../configs/db');
+const IndexMappings = require("../configs/mappings");
 
 module.exports = {
     isExist: isExist,
@@ -16,29 +17,29 @@ function isExist(req, res){
 
 
 function createIndices(req, res){
-    const indices = ["users", "cases", "statuses", "briefs"];
 
+    //const indices = ["users", "cases", "statuses", "briefs"];
+    const indices = Object.keys(IndexMappings);
+    var cnt = 0;
     indices.forEach(function(indexVal){
-        var success  = 0;
-        var error = 0;
+        console.log(indexVal, "indexVal Value");        
             DB.client.indices.exists({index: indexVal}, function(err, isExistIndex){
                 if(!isExistIndex){
                     DB.client.indices.create({
                         index: indexVal,
                         body: {
-                        "settings" : {
-                            "index" : {
-                                "number_of_shards" : 3, 
-                                "number_of_replicas" : 2 
-                            }
-                        }
+                            "settings" : {
+                                "number_of_shards" : 1
+                            },
+                            "mappings" : IndexMappings[indexVal]
                     }}, function(err, createdIndex){
-                        success = success + 1;
-                        /* if(err) res.status(500).send({"status":"error", "data" : err, "message": "Error in creating indices"})
-                        res.status(500).send({"status":"success", "data" : createdIndex, "message": "Index created successfully"}); */
+                        cnt += 1;
+                        console.log(err, "err while creating inddex"+ indexVal);
+                        if(cnt == indices.length){
+                            res.send("Created index");
+                        }                       
                     })
                 }
-            })
-            res.send("Created index");
+            })            
     })
 }
