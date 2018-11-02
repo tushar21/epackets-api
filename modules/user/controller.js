@@ -1,7 +1,15 @@
 const User =  require('../../models/user');
 const Response = require("../../helper/response");
 
-module.exports.add = function(req, res){
+module.exports = {
+    add : add,
+    login: login,
+    list: list,
+    userDetails: userDetails,
+    update: update
+}
+
+function add(req, res){
     let user = req.body;
     user.status = "0";
     User.add(req.body)
@@ -14,7 +22,7 @@ module.exports.add = function(req, res){
     })
 }
 
-module.exports.login = function(req, res){
+function login(req, res){
     console.log("User Login initiated");
     User.get(req.body)
     .then(function(userSaveResponse){
@@ -30,7 +38,7 @@ module.exports.login = function(req, res){
     })
 }
 
-module.exports.list = function(req, res){
+function list(req, res){
     console.log("Initiated user list");
     User.list()
     .then(function(data){
@@ -41,7 +49,7 @@ module.exports.list = function(req, res){
     })
 }
 
-module.exports.userDetails = function(req, res){
+function userDetails(req, res){
     console.log("Initiated userDetails");
     User.details(req.params.id)
     .then(function(user ){        
@@ -50,4 +58,14 @@ module.exports.userDetails = function(req, res){
     .catch(function(err){
         Response.error(res, "Error in fetching user details", err);
     });    
+}
+
+function update(req, res){
+    User.update(req.params.id, req.body)
+    .then(function(user ){
+        Response.success(res,"User updated successfully!!", user);
+    })
+    .catch(function(err){
+        Response.error(res, "Error in updating user details", err);
+    });   
 }

@@ -9,7 +9,8 @@ module.exports = {
     get : get,
     add : add,
     list : list,
-    details:details
+    details:details,
+    update:update
 };
 
 function add(user){
@@ -20,7 +21,7 @@ function add(user){
     user.type = "customer";
     return new Promise(function(resolve, reject){
         db.client.create({
-            'index': userIndice,
+            "index": userIndice,
             "type": IndexType,
             "id": uuid,
             "body": user
@@ -67,19 +68,25 @@ function get(qry){
             }
             else if(data.hits && data.hits.total == 1){
                 let user = data.hits.hits[0];
-                returnUser = {
-                    id : user._id,
-                    email : user._source.email,
-                    first_name : user._source.first_name,
-                    last_name : user._source.last_name
+                if(user.status == '0'){
+                    result.data = null;
+                    result.message = "User is not active. Please contact administartor for account activation!";
+                    reject(result);    
                 }
-                var jwtToken = await JWT.encode(returnUser);
-                returnUser.token = jwtToken;
-                result.data = returnUser;
-                result.message = "User logged in successfully";
-                resolve(result);
-            } 
-            
+                else{
+                    returnUser = {
+                        id : user._id,
+                        email : user._source.email,
+                        first_name : user._source.first_name,
+                        last_name : user._source.last_name
+                    }
+                    var jwtToken = await JWT.encode(returnUser);
+                    returnUser.token = jwtToken;
+                    result.data = returnUser;
+                    result.message = "User logged in successfully";
+                    resolve(result);
+                }                
+            }            
             resolve(result);
         });
     });
@@ -138,4 +145,21 @@ function details(userId){
             }
         });
     });
+}
+
+function update(id, qry){
+    return new Promise(function(resolve, reject){
+        db.client.update({
+            index: userIndice,
+            type: IndexType,
+            id: id,
+            body: {
+              // put the partial document under the `doc` key
+              doc: qry
+            }
+          }, function(err, data){
+            if (err) reject(err);
+            resolve(data);
+        });
+    })    
 }
