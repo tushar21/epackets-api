@@ -18,9 +18,8 @@ npm start
 ```
 
 ##After api and elasticsearch started, create indices by running this url in browser: 
-``` 
-http://localhost:3002/cron/createIndices 
-
+```
+http://localhost:3002/cron/createIndices
 ```
 
 Note : you can use your ip address instead of localhost Ex: http://<YOUR IP HERE>/cron/createIndices
