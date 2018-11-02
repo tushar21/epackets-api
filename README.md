@@ -22,4 +22,4 @@ npm start
 http://localhost:3002/cron/createIndices
 ```
 
-Note : you can use your ip address instead of localhost Ex: http://<YOUR IP HERE>/cron/createIndices
+Note : you can use your ip address instead of localhost Ex: http://YOUR_IP_HERE/cron/createIndices
