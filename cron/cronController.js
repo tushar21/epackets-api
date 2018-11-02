@@ -16,7 +16,7 @@ function isExist(req, res){
 
 
 function createIndices(req, res){
-    const indices = ["users", "cases", "statuses", 'briefs'];
+    const indices = ["users", "cases", "statuses", "briefs"];
 
     indices.forEach(function(indexVal){
         var success  = 0;

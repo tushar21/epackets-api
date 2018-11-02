@@ -18,9 +18,8 @@ APP.use(function(req, res, next) {
 APP.use(bodyParser.json());
 
 APP.use(async function(req, res, next){
-    if(req.method == 'OPTIONS') return next();
-    let excludedPaths = ['/user/login', '/user/signup'];
-    if(excludedPaths.includes(req.path)) return next();
+    let excludedPaths = ['/user/login', '/user/signup', 'cron/createIndices'];
+    if(excludedPaths.includes(req.path) || req.method == 'OPTIONS') return next();
     if(req.headers && req.headers.authorization){
     let headerToken = req.headers.authorization.split(" ")[1];
     if(headerToken) {
