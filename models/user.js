@@ -4,7 +4,7 @@ const UUID = require('../helper/uuid');
 const MD5 = require('md5');
 const JWT= require('../helper/jwt');
 const userIndice = "users";
-const IndexType =   'mytype';
+const IndexType =   '_doc';
 module.exports = {
     get : get,
     add : add,
@@ -36,6 +36,7 @@ function get(qry){
     if(qry.password) {
         qry.password = MD5(qry.password);
     }
+    console.log(qry, "qry.password");
     return new Promise(function(resolve, reject){
         db.client.search({
             "index": userIndice,
@@ -45,7 +46,7 @@ function get(qry){
                       "must": [
                         {
                           "term": {
-                            "email.keyword": qry.email
+                            "email": qry.email
                           }
                         },
                         {
@@ -60,6 +61,7 @@ function get(qry){
         }, async function(err, data){
             if(err) reject(err);    
             let returnUser = {};
+            console.log(data, "data after login");
             let result = {data: null, message : "", status : "success"}
             if(data.hits && data.hits.total == 0){
                 result.status = "error";
